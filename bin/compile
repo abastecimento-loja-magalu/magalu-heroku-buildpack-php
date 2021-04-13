@@ -28,7 +28,6 @@ trap 'err_trap' ERR
 
 # stdlib
 source $bp_dir/bin/util/stdlib.sh
-rm $bp_dir/bin/util/stdlib.sh
 
 # failure counting
 source $bp_dir/bin/util/failures.sh
@@ -349,6 +348,7 @@ else
 	HEROKU_PHP_DEFAULT_RUNTIME_VERSION="^7.0.0"
 fi
 export HEROKU_PHP_DEFAULT_RUNTIME_VERSION
+
 # extract requirements from composer.lock
 /app/.heroku/php-min/bin/php $bp_dir/bin/util/platform.php "$bp_dir/support/installer/" $HEROKU_PHP_PLATFORM_REPOSITORIES 2>&1 >$build_dir/.heroku/php/composer.json | indent || {
 	code=$?

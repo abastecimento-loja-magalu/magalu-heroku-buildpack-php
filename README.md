@@ -49,7 +49,9 @@ Os passos seguidos para a criação deste repo foram os seguintes:
    - `README.md`
    
 , e foram removidos os diretórios e arquivos:
-   - `/support/*`
+   - `/support/_conf`
+   - `/support/_docker`
+   - `/support/_util`
    - `/test/*`
    - `/.github/*`
    - `requirements.txt`
