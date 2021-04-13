@@ -1,9 +1,74 @@
-# Heroku buildpack: PHP [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-php.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-php)
+# Heroku buildpack: PHP
 
-![php](https://cloud.githubusercontent.com/assets/51578/8882982/73ea501a-3219-11e5-8f87-311e6b8a86fc.jpg)
+---
+# Sobre
+
+Este repositório foi criado a partir do PHP Heroku buildpack - https://github.com/heroku/heroku-buildpack-php.git
+
+O squad possui uma aplicação Python 5 legada, mas importante, que precisa ser mantida no ar. Como o repositório oficial não oferecerá mais suporte ao Python 5 (em breve pode até ser descontinuado), foi criado este repo.
+
+Os passos seguidos para a criação deste repo foram os seguintes:
 
 
-This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for PHP applications.
+1. Git clone e download do projeto original:
+   - `git clone https://github.com/heroku/heroku-buildpack-php.git`
+
+
+2. Criação de virtualenv com py2, necessário para execução dos scripts de cópia dos arquivos do *bucket* S3 original: 
+   - `pyenv install 2.7.18`
+   - `pyenv virtualenv 2.7.18 buildpack`
+   - `pyenv activate buildpack`
+
+
+3. Instação das dependencias:
+   - `cd heroku heroku-buildpack-php`
+   - `pip install -r requirements.txt`
+
+
+4. Configuração do `AWSAccessKeyId` e `AWSSecretKey` do bucket destino, para ser possível usar o utilitário `s3cmd`:
+   - `s3cmd --configure` *(informar a AWSAccessKeyId e AWSSecretKey (access-key obtida a partir da conta AWS: https://console.aws.amazon.com/iam/home?#/security_credentials)*
+
+
+5. Execução dos scripts de cópia dos arquivos (sync, mkrepo) e enviar os arquivos `package.json` ajustados para as distribuições `heroku-16` e `heroku-18`:
+   - `cd support/build/_util/`
+   - `./sync.sh "magalu-php-buildpack" "dist-heroku-16-stable/" "s3" "lang-php" "dist-heroku-16-stable/"`
+   - `./mkrepo.sh "magalu-php-buildpack" "dist-heroku-16-stable/"`
+   - `s3cmd --ssl --acl-public -m application/json put packages.json s3://magalu-php-buildpack/dist-heroku-16-stable/packages.json`
+   - `./sync.sh "magalu-php-buildpack" "dist-heroku-18-stable/" "s3" "lang-php" "dist-heroku-18-stable/"`
+   - `./mkrepo.sh "magalu-php-buildpack" "dist-heroku-18-stable/"`
+   - `s3cmd --ssl --acl-public -m application/json put packages.json s3://magalu-php-buildpack/dist-heroku-18-stable/packages.json`
+
+
+6) Os arquivos das bibliotecas foram copiados para o *bucket* S3 `magalu-php-buildpack` da conta AWS da empresa, e disponibilizados para leitura pública em `https://magalu-php-buildpack.s3.amazonaws.com/` 
+
+
+7) Até então, o git-clone do repositório somente serviu para a execução dos scripts e geração do novo bucket com a cópia das `libs`; 
+   é necessário, então, clonar o repositório original para um novo repositório, e modificar os arquivos para referenciarem as *libs* no novo bucket - pode ser feito no próprio github; 
+   em relação ao repo original, os arquivos alterados foram:
+   - `bin/compile`
+   - `README.md`
+   
+, e foram removidos os diretórios e arquivos:
+   - `/support/*`
+   - `/test/*`
+   - `/.github/*`
+   - `requirements.txt`
+   - `.travis.yml`
+
+
+8) Também foi copiado para o diretório *bin/util* deste repositório o script `stdlib.sh` que, no buildpack original, é executado a partir de um local remoto no arquivo `bin/compile`;
+
+
+9) Após ajustes e testes, o repositório foi clonado para o gilab do Magalu;
+
+
+10) O uso do buildpack no projeto se dá informando o caminho do próprio repositório: <*caminho do repo aqui*>
+
+---
+
+# Original README
+
+This buildpack was created from the [Heroku buildpack - https://github.com/heroku/heroku-buildpack-php.git](https://github.com/heroku/heroku-buildpack-php) repo for PHP applications
 
 It uses Composer for dependency management, supports PHP or HHVM (experimental) as runtimes, and offers a choice of Apache2 or Nginx web servers.
 

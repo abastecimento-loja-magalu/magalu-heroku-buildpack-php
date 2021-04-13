@@ -9,6 +9,8 @@ set -eu
 # move hidden files too, just in case
 shopt -s dotglob
 
+s3_url="https://magalu-php-buildpack.s3.amazonaws.com/dist-${STACK}-stable/"
+
 STACK=${STACK:-cedar-14} # Anvil has none
 build_dir=$1
 cache_dir=$2/php
@@ -27,16 +29,6 @@ source $bp_dir/bin/util/common.sh
 trap 'err_trap' ERR
 
 # stdlib
-# download to a file first, as the function restarts the entire download on code 18 connection reset (not all servers support -C)
-curl_retry_on_18 --fail --silent --location -o $bp_dir/bin/util/stdlib.sh https://lang-common.s3.amazonaws.com/buildpack-stdlib/v8/stdlib.sh || {
-	error <<-EOF
-		Failed to download standard library for bootstrapping!
-		
-		This is most likely a temporary internal error. If the problem
-		persists, make sure that you are not running a custom or forked
-		version of the Heroku PHP buildpack which may need updating.
-	EOF
-}
 source $bp_dir/bin/util/stdlib.sh
 rm $bp_dir/bin/util/stdlib.sh
 
@@ -200,7 +192,6 @@ mkdir -p $COMPOSER_HOME
 
 status "Bootstrapping..."
 
-s3_url="https://lang-php.s3.amazonaws.com/dist-${STACK}-stable/"
 # prepend the default repo to the list configured by the user
 # list of repositories to use is in ascening order of precedence
 export_env_dir "$env_dir" '^HEROKU_PHP_PLATFORM_REPOSITORIES$'
