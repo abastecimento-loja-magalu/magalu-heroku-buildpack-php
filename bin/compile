@@ -9,8 +9,6 @@ set -eu
 # move hidden files too, just in case
 shopt -s dotglob
 
-s3_url="https://magalu-php-buildpack.s3.amazonaws.com/dist-${STACK}-stable/"
-
 STACK=${STACK:-cedar-14} # Anvil has none
 build_dir=$1
 cache_dir=$2/php
@@ -191,6 +189,8 @@ mkdir -p $COMPOSER_HOME
 [[ $build_dir == '/app' ]] || ln -s $build_dir/.heroku/php /app/.heroku/php
 
 status "Bootstrapping..."
+
+s3_url="https://magalu-php-buildpack.s3.amazonaws.com/dist-${STACK}-stable/"
 
 # prepend the default repo to the list configured by the user
 # list of repositories to use is in ascening order of precedence
