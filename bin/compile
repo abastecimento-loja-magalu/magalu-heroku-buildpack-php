@@ -191,14 +191,12 @@ status "Detected stack: ${STACK}"
 
 s3_url="https://magalu-php-buildpack.s3.amazonaws.com/dist-${STACK}-stable/"
 
-s3_url_test="https://magalus-php-buildpack.s3.amazonaws.com/dist-${STACK}-stable/"
-
 status "Bootstrapping ${STACK}, repository ${s3_url}..."
 
 # prepend the default repo to the list configured by the user
 # list of repositories to use is in ascening order of precedence
 export_env_dir "$env_dir" '^HEROKU_PHP_PLATFORM_REPOSITORIES$'
-HEROKU_PHP_PLATFORM_REPOSITORIES="${s3_url_test} ${HEROKU_PHP_PLATFORM_REPOSITORIES:-}"
+HEROKU_PHP_PLATFORM_REPOSITORIES="${s3_url} ${HEROKU_PHP_PLATFORM_REPOSITORIES:-}"
 if [[ "${HEROKU_PHP_PLATFORM_REPOSITORIES}" == *" - "* ]]; then
 	# a single "-" in the user supplied string removes everything to the left of it; can be used to delete the default repo
 	notice_inline "Default platform repository disabled."
