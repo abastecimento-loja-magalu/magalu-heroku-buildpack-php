@@ -1,5 +1,9 @@
 # heroku-buildpack-php CHANGELOG
 
+## v200 (2021-04-15)
+
+- Created Magalu Gitlab repo
+
 ## v179 (2020-08-13)
 
 ### ADD
