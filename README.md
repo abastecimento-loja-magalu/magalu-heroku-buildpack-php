@@ -66,6 +66,9 @@ Os passos seguidos para a criação deste repo foram os seguintes:
 
 10) O uso do buildpack no projeto se dá informando o caminho do próprio repositório: <*caminho do repo aqui*>
 
+
+Para referência sobre a api de buildpacks: https://devcenter.heroku.com/articles/buildpack-api
+
 ---
 
 # Original README
